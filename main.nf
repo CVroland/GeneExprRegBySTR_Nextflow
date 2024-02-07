@@ -24,5 +24,5 @@ workflow {
     seqNameFile=Channel.fromPath(params.seqNameFile)
     mnnModelParams=strClass.map(strClass -> file("${params.mnnModelsDir}/MNN_ranks_${strClass}_.pt"))
     mnnModelHParams=strClass.map(strClass -> file("${params.mnnModelsDir}/MNN_ranks_${strClass}_params.npy"))
-    // mnnRsultsArray=COMPUTE_MNN_RESULTS(strClass.first(), oneHotSeqFile.first(), seqNameFile.first(), mnnModelHParams.first(), mnnModelParams.first())
+    mnnRsultsArray=COMPUTE_MNN_RESULTS(strClass.first(), oneHotSeqFile.first(), seqNameFile.first(), mnnModelHParams.first(), mnnModelParams.first())
 }
