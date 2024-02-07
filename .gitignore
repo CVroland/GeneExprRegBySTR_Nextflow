@@ -1,0 +1,15 @@
+# ignore workspace files
+/*.code-workspace
+
+# ignore data files
+/data/*
+
+# basic stuff
+# - all pycache folders
+/bin/src/*/__pycache__/
+/bin/*/__pycache__/
+/__pycache__
+
+# - nexflow stuff
+.nextflow*
+work
