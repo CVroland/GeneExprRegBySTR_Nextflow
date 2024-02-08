@@ -117,8 +117,7 @@ def parseArgs() -> argparse.Namespace:
     parser.add_argument("hParamsPath", type=str, help="Path to the file containing the hyperparameters of the MNN model.")
     parser.add_argument("paramsPath", type=str, help="Path to the file containing the parameters of the MNN model.")
     parser.add_argument("-l","--seqNameList", type=str, help="Path to a file containing a list of sequence names to filter the data.")
-    parser.add_argument("-o","--output", type=argparse.FileType('w'), default="-", help="Path to the output file. Use '-' for stdout. Default: stdout")
-    parser.add_argument("--mnnMaxResults", action="store_true", help="Get the MNN max results array instead.")
+    parser.add_argument("-o","--output", type=argparse.FileType('wb'), default="-", help="Path to the output file. Use '-' for stdout. Default: stdout")
     return parser.parse_args()
 
 def main():
@@ -128,24 +127,18 @@ def main():
     hParamsPath=args.hParamsPath
     paramsPath=args.paramsPath
     seqNameListPath=args.seqNameList
-    getMnnMaxResults=args.mnnMaxResults
 
     if seqNameListPath is not None:
-        seqNameList = pd.read_csv(seqNameList, sep="\t", header=None)[0].to_numpy()
+        if seqNameListPath.endswith((".npy", ".npz")):
+            seqNameList = np.load(seqNameListPath)
+        else: # assume it's a plain text file
+            seqNameList = pd.read_csv(seqNameList, sep="\t", header=None)[0].to_numpy()
     else :
         seqNameList=None
     seqNames, oneHotSeqs = loadData(oneHotSeqFilePath, namesFilePath, seqNameList=seqNameList)
     mnnModel = loadModel(hParamsPath, paramsPath)
-    mnnResultsArray, mnnMaxResultsArray = getMnnResults(oneHotSeqs, mnnModel)
-
-    if getMnnMaxResults:
-        resultArray = mnnMaxResultsArray
-    else:
-        resultArray = mnnResultsArray
-
-    df = pd.DataFrame(resultArray)
-    df.index = seqNames
-    df.to_csv(args.output, sep="\t", header=False, index=True)
+    mnnResultsArray, _ = getMnnResults(oneHotSeqs, mnnModel)
+    np.save(args.output, mnnResultsArray)
 
 if __name__ == "__main__":
     main()

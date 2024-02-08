@@ -8,6 +8,7 @@
 # - all pycache folders
 /bin/src/*/__pycache__/
 /bin/*/__pycache__/
+/bin/__pycache__/
 /__pycache__
 
 # - nexflow stuff
