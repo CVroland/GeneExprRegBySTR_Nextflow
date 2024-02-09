@@ -3,7 +3,7 @@ include {LIST_STR_MODULE} from './modules/listModule.nf'
 include {REQUEST_JASPAR_DATABASE} from './modules/requestJasparDatabase.nf'
 include {MEME_TO_HOMER_FORMAT} from './modules/memeToHomerFormat.nf'
 include {RENAME_SEQ_IN_FASTA} from './modules/renameSeqIn1001ncFasta.nf'
-include{GET_SEQ_NAMES_AND_ONE_HOT_BY_STR_CLASS} from './modules/filterSeqNameAndOneHotSeq.nf'
+include{GET_SEQ_NAMES_AND_ONE_HOT_BY_STR_CLASS} from './modules/getSeqNameAndOneHotSeqByStrClass.nf'
 include {COMPUTE_MNN_RESULTS} from './modules/computeMnnResults.nf'
 include {GET_STR_CLASS_BED_FILES} from './modules/getStrClassBedFiles.nf'
 
@@ -48,8 +48,8 @@ workflow{
     (strSeqNameFile, strOneHotSeqFile)=GET_SEQ_NAMES_AND_ONE_HOT_BY_STR_CLASS(strClass, seqNameFile, oneHotSeqFile, mergedResultsFile)
     //join input channel by strClass 
     // computeMnnResultsJoinedParameters : [strClass, mnnModelHParams, mnnModelParams, strSeqNameFile]
-    computeMnnResultsJoinedParameters = strClass.join(mnnModelHParams).join(mnnModelParams).join(strSeqNameFile)
-    mnnResultsArray=COMPUTE_MNN_RESULTS(computeMnnResultsJoinedParameters, oneHotSeqFile, seqNameFile)
+    computeMnnResultsJoinedParameters = strClass.join(mnnModelHParams).join(mnnModelParams).join(strSeqNameFile).join(strOneHotSeqFile)
+    mnnResultsArray=COMPUTE_MNN_RESULTS(computeMnnResultsJoinedParameters)
     
     /*
     ## Get the fasta files of background sequences and foreground sequences
