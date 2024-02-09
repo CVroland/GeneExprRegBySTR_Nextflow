@@ -3,13 +3,13 @@ process GET_SEQ_NAMES_BY_STR_CLASS{
 
     input:
     val strClass
-    path seqNamesFile
+    path mergedResultsFile
 
     output:
     tuple val(strClass), path("${strClass}_seqNames.npy")
 
     script:
     """
-    filterSeqNames.py ${seqNamesFile} ${strClass} ${strClass}_seqNames.npy
+    filterSeqNames.py ${mergedResultsFile} ${strClass} ${strClass}_seqNames.npy
     """
 }

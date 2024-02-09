@@ -17,6 +17,7 @@ __version__ = "0.0.1"
 import os
 import argparse
 import numpy as np
+import pandas as pd
 from miscFct import splitEStrHeader, rcDnaSeq
 
 def filterSeqNames(
@@ -47,15 +48,35 @@ def filterSeqNames(
     )
     return np.unique(seqNamesArray[strClassMask])
 
+def getSeqNamesArray(mergedResultsFilePath:str)->np.ndarray:
+    """
+    Get the sequence names array from the merged results file.
+
+    Parameters
+    ----------
+    mergedResultsFilePath : str
+        Path to the merged results file.
+
+    Returns
+    -------
+    np.ndarray
+        The sequence names array.
+
+    """
+    # merged_results.txt is a TSV file where the first column is the STR-gene association separated by a ':'
+    strSeries=pd.read_csv(mergedResultsFilePath, sep=':', header=None, index_col=False, usecols=[0])[0]
+    return strSeries.to_numpy(dtype=str)
+
+
 def main():
     #parse arguments
     parser=argparse.ArgumentParser(description="Filter sequenceNames file to keep only the sequences for a given STR class.")
-    parser.add_argument("seqNamesFilePath", type=str, help="Path to the sequenceNames file.")
+    parser.add_argument("mergedResultsFilePath", type=str, help="Path to the sequenceNames file.")
     parser.add_argument("strClass", type=str, help="The STR class sequence of the STR class to keep.")
     parser.add_argument("outputFilePath", type=str, help="Path to the output file.")
     args=parser.parse_args()
     #load data
-    seqNamesArray=np.load(args.seqNamesFilePath)
+    seqNamesArray=getSeqNamesArray(args.mergedResultsFilePath)
     #filter data
     filteredSeqNamesArray=filterSeqNames(seqNamesArray, args.strClass)
     #save data
