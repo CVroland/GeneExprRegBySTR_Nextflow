@@ -7,8 +7,10 @@ include{GET_SEQ_NAMES_AND_ONE_HOT_BY_STR_CLASS} from './modules/getSeqNameAndOne
 include {COMPUTE_MNN_RESULTS} from './modules/computeMnnResults.nf'
 include {GET_STR_CLASS_BED_FILES} from './modules/getStrClassBedFiles.nf'
 include {GET_STR_MODULE_HITS_BED} from './modules/getStrModuleHitsBed.nf'
-include {GET_FASTA_BEDTOOLS} from './modules/getFastaBedtools.nf'
+include {GET_FASTA_BEDTOOLS as GET_FASTA_BEDTOOLS_STRMODULEHITS} from './modules/getFastaBedtools.nf'
+include {GET_FASTA_BEDTOOLS as GET_FASTA_BEDTOOLS_STRMODULENONHITS} from './modules/getFastaBedtools.nf'
 include {GET_FAIDX_SAMTOOLS} from './modules/getFaidxSamtools.nf'
+include {GET_STR_MODULE_NON_HITS_BED} from './modules/getStrModuleNonHitsBed.nf'
 
 workflow{
     /* 
@@ -66,12 +68,13 @@ workflow{
     // Foreground : positive hits for each (strClass,module)
     getStrModuleHitsBedParameters=strPositiveHits.cross(strClassModule).map(it -> [it[1][0], it[1][1], it[0][1]]) //join and remap to get tuples (strClass, ModuleId, strPositiveHits)
     strModuleHitsBed=GET_STR_MODULE_HITS_BED(getStrModuleHitsBedParameters)
-    strModuleHitsFasta=GET_FASTA_BEDTOOLS(strModuleHitsBed, hipStr1001bpFasta, hipStr1001bpFaidx)
+    strModuleHitsFasta=GET_FASTA_BEDTOOLS_STRMODULEHITS(strModuleHitsBed, hipStr1001bpFasta, hipStr1001bpFaidx)
     // Background : non hits for each (strClass,module)
-    /*
-    strModuleNonHitsBed
-    strModuleNonHitsFasta
+    getStrModuleNonHitsBedParameters=strNegativeHits.cross(strClassModule).map(it -> [it[1][0], it[1][1], it[0][1]]) //join and remap to get tuples (strClass, ModuleId, strNegativeHits)
+    strModuleNonHitsBed=GET_STR_MODULE_NON_HITS_BED(getStrModuleNonHitsBedParameters)
+    strModuleNonHitsFasta=GET_FASTA_BEDTOOLS_STRMODULENONHITS(strModuleNonHitsBed, hipStr1001bpFasta, hipStr1001bpFaidx)
     // Background : for each (strClass, module) : non hits for the module but hits in other modules of the same STR class
+    /*
     strModuleOtherHitsBed
     strModuleOtherHitsFasta
     */
