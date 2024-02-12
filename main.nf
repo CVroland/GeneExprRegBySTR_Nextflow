@@ -6,6 +6,7 @@ include {RENAME_SEQ_IN_FASTA} from './modules/renameSeqIn1001ncFasta.nf'
 include{GET_SEQ_NAMES_AND_ONE_HOT_BY_STR_CLASS} from './modules/getSeqNameAndOneHotSeqByStrClass.nf'
 include {COMPUTE_MNN_RESULTS} from './modules/computeMnnResults.nf'
 include {GET_STR_CLASS_BED_FILES} from './modules/getStrClassBedFiles.nf'
+include {GET_STR_MODULE_HITS_BED} from './modules/getStrModuleHitsBed.nf'
 
 workflow{
     /* 
@@ -15,7 +16,8 @@ workflow{
     strClassListPath=LIST_STR_CLASS(mnnModelsDir)
     strClass=strClassListPath.splitText().map{it -> it.trim()}
     strModuleListPath=LIST_STR_MODULE(strClassListPath, mnnModelsDir)
-    strClassModule=strModuleListPath.splitCsv(sep:'\t', header:['class', 'moduleId'])
+    //strClassModule=strModuleListPath.splitCsv(sep:'\t', header:['class', 'moduleId'])
+    strClassModule=strModuleListPath.splitCsv(sep:'\t')
 
     /* 
     ## create results directory
@@ -56,5 +58,17 @@ workflow{
     */
     // get the "positive" and the "negative" bed files for each STR class. For sorting purpose, the blockId is store in the name column of the bed file.
     getStrClassBedFilesJoinedParameters = strClass.join(strSeqNameFile).join(mnnResultsArray).join(mnnModelHParams).join(mnnModelParams)
-    (strPositiveMnnHits, strNegativeMnnHits) = GET_STR_CLASS_BED_FILES(getStrClassBedFilesJoinedParameters)
+    (strPositiveHits, strNegativeHits) = GET_STR_CLASS_BED_FILES(getStrClassBedFilesJoinedParameters)
+    // now we have general foreground and background bed files, we can make foreground and background for each module
+    // Foreground : positive hits for each (strClass,module)
+    getStrModuleHitsBedParameters=strPositiveHits.cross(strClassModule).map(it -> [it[1][0], it[1][1], it[0][1]])
+    strModuleHitsBed=GET_STR_MODULE_HITS_BED(getStrModuleHitsBedParameters)
+    /* strModuleHitsFasta
+    // Background : non hits for each (strClass,module)
+    strModuleNonHitsBed
+    strModuleNonHitsFasta
+    // Background : for each (strClass, module) : non hits for the module but hits in other modules of the same STR class
+    strModuleOtherHitsBed
+    strModuleOtherHitsFasta
+    */
 }
