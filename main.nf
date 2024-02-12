@@ -7,6 +7,8 @@ include{GET_SEQ_NAMES_AND_ONE_HOT_BY_STR_CLASS} from './modules/getSeqNameAndOne
 include {COMPUTE_MNN_RESULTS} from './modules/computeMnnResults.nf'
 include {GET_STR_CLASS_BED_FILES} from './modules/getStrClassBedFiles.nf'
 include {GET_STR_MODULE_HITS_BED} from './modules/getStrModuleHitsBed.nf'
+include {GET_FASTA_BEDTOOLS} from './modules/getFastaBedtools.nf'
+include {GET_FAIDX_SAMTOOLS} from './modules/getFaidxSamtools.nf'
 
 workflow{
     /* 
@@ -34,7 +36,8 @@ workflow{
     ## Prepare the fasta files of 1001 bp sequences
     */
     originalHipStr1001bpFasta=Channel.fromPath(params.originalHipStr1001bpFasta)
-    hipStr1001bpFasta=RENAME_SEQ_IN_FASTA(originalHipStr1001bpFasta)
+    hipStr1001bpFasta=RENAME_SEQ_IN_FASTA(originalHipStr1001bpFasta).first()
+    hipStr1001bpFaidx=GET_FAIDX_SAMTOOLS(hipStr1001bpFasta).first()
     
     /*
     ## get MNN scores for each STR class (npy files of 3D arrays (module, seq, position))
@@ -61,10 +64,11 @@ workflow{
     (strPositiveHits, strNegativeHits) = GET_STR_CLASS_BED_FILES(getStrClassBedFilesJoinedParameters)
     // now we have general foreground and background bed files, we can make foreground and background for each module
     // Foreground : positive hits for each (strClass,module)
-    getStrModuleHitsBedParameters=strPositiveHits.cross(strClassModule).map(it -> [it[1][0], it[1][1], it[0][1]])
+    getStrModuleHitsBedParameters=strPositiveHits.cross(strClassModule).map(it -> [it[1][0], it[1][1], it[0][1]]) //join and remap to get tuples (strClass, ModuleId, strPositiveHits)
     strModuleHitsBed=GET_STR_MODULE_HITS_BED(getStrModuleHitsBedParameters)
-    /* strModuleHitsFasta
+    strModuleHitsFasta=GET_FASTA_BEDTOOLS(strModuleHitsBed, hipStr1001bpFasta, hipStr1001bpFaidx)
     // Background : non hits for each (strClass,module)
+    /*
     strModuleNonHitsBed
     strModuleNonHitsFasta
     // Background : for each (strClass, module) : non hits for the module but hits in other modules of the same STR class

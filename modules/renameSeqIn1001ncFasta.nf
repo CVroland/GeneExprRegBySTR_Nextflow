@@ -5,7 +5,7 @@ process RENAME_SEQ_IN_FASTA{
     output:
     path "hg38.hipstr_reference.cage.500bp.around3end.2.fa"
 
-    script:
+    shell:
     '''
     cat !{inputFasta} | sed '/^>/s/|.*$//' > hg38.hipstr_reference.cage.500bp.around3end.2.fa
     '''
