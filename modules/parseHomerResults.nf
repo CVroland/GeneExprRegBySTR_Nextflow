@@ -1,4 +1,5 @@
 process PARSE_HOMER_RESULTS{
+    publishDir "$params.resultsDir/$strClass/$moduleId/$subName", mode: 'copy'
     conda params.condaEnv
 
     input:

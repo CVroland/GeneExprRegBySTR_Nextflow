@@ -3,6 +3,8 @@
 
 # ignore data files
 /data/*
+# ignore results files
+/results/*
 
 # basic stuff
 # - all pycache folders

@@ -97,10 +97,10 @@ workflow{
     homerLenParam=GET_HOMER_LEN_PARAM(strModuleHitsFasta)
     // call with strModuleNonHitsFastaNonEmpty (posision where module doesn't hit) as background
     findMotifsHomerNonHitParams=strClassModule.join(strModuleHitsFastaNonEmpty, by:[0,1]).join(strModuleNonHitsFastaNonEmpty, by:[0,1]).join(homerLenParam, by:[0,1])
-    nonHitsHomerResultsFolders=FIND_MOTIFS_HOMER_NONHITS(findMotifsHomerNonHitParams, jasparDatabaseHomer, "allHitsVsNonHits")
+    nonHitsHomerResultsFolders=FIND_MOTIFS_HOMER_NONHITS(findMotifsHomerNonHitParams, jasparDatabaseHomer, "nonHitsBg")
     // call with strModuleOtherHitsFastaNonEmpty (position where module doesn't hit but other module does) as background
     findMotifsHomerOtherHitsParams=strClassModule.join(strModuleHitsFastaNonEmpty, by:[0,1]).join(strModuleOtherHitsFastaNonEmpty, by:[0,1]).join(homerLenParam, by:[0,1])
-    otherHitsHomerResultsFolders=FIND_MOTIFS_HOMER_OTHERHITS(findMotifsHomerNonHitParams, jasparDatabaseHomer, "allHitsVsOtherHits")
+    otherHitsHomerResultsFolders=FIND_MOTIFS_HOMER_OTHERHITS(findMotifsHomerNonHitParams, jasparDatabaseHomer, "otherHitsBg")
 
     /*
     ## Parse Homer results

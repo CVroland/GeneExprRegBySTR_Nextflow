@@ -1,7 +1,7 @@
 process CONCATE_HOMER_RESULTS{
-
+    publishDir "$params.resultsDir/", mode: 'copy'
     input:
-    path(strModuleHomerCsv, stageAs: "?/*")
+    path strModuleHomerCsv, stageAs: "?/*"
     val subName
 
     output:

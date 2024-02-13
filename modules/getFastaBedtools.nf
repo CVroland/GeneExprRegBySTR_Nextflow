@@ -1,4 +1,5 @@
 process GET_FASTA_BEDTOOLS{
+    publishDir "$params.resultsDir/$strClass/$moduleId", mode: 'copy'
     conda params.condaEnv
 
     input:

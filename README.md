@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This is a part of the study "Impact of transcription initiation at microsatellites on gene expression" by [M. Grapotte et al.](https://plmlatex.math.cnrs.fr/project/6352614c3e03ed92d5ea13ea). In this part, we aim to identify candidate motifs responsible of STR-initiating RNA with HOMER findMotifs.pl.
+This is a part of the study ["Impact of transcription initiation at microsatellites on gene expression" M. Grapotte *et al.*, 2024](linkToTheArticle). In this part, we aim to identify candidate motifs responsible of STR-initiating RNA with HOMER findMotifs.pl.
 
 ## Requirements
 

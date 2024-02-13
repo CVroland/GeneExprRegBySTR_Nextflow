@@ -1,4 +1,5 @@
 process FIND_MOTIFS_HOMER{
+    publishDir "$params.resultsDir/$strClass/$moduleId/$subName", mode: 'copy'
     conda params.condaEnv
 
     input:

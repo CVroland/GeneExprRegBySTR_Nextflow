@@ -1,33 +1,21 @@
 name: GeneExprRegBySTR
 channels:
 - conda-forge
-- nvidia
 - bioconda
 - defaults
 
 dependencies:
-  - python
-  - ipython
-  - ipykernel
-  - numba
-  - numpy
-  - cupy
-  - pandas
-  - pytorch 
-  - cudatoolkit
-  - scipy
-  - biopython
-  - bedtools=2.30.0
-  - pybedtools
-  - pyjaspar
-  - matplotlib
-  - seaborn
-  - tqdm
-  - meme # for FIMO
-  - homer
-  - weblogo
-  - beautifulsoup4 
-  - lxml 
-  - pip
-  - pip:
-    - vizsequence
+- python
+- numpy
+- pandas
+- pyarrow
+- pytorch 
+- biopython
+- bedtools=2.30.0
+- samtools
+- pyjaspar
+- matplotlib
+- seaborn
+- homer
+- beautifulsoup4 
+- lxml 

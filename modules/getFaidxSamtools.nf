@@ -1,5 +1,5 @@
 process GET_FAIDX_SAMTOOLS{
-    //TODO : modify conda env and add to this process
+    conda params.condaEnv
 
     input :
     path(fastaFile)
