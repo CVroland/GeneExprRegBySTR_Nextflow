@@ -13,6 +13,9 @@ include {GET_FASTA_BEDTOOLS as GET_FASTA_BEDTOOLS_STRMODULEOTHERHITS} from './mo
 include {GET_FAIDX_SAMTOOLS} from './modules/getFaidxSamtools.nf'
 include {GET_STR_MODULE_NON_HITS_BED} from './modules/getStrModuleNonHitsBed.nf'
 include {GET_STR_MODULE_OTHER_HITS_BED} from './modules/getStrModuleOtherHitsBed.nf'
+include {GET_HOMER_LEN_PARAM} from './modules/getHomerLenParams.nf'
+include {FIND_MOTIFS_HOMER as FIND_MOTIFS_HOMER_NONHITS} from './modules/findMotifsHomer.nf'
+include {FIND_MOTIFS_HOMER as FIND_MOTIFS_HOMER_OTHERHITS} from './modules/findMotifsHomer.nf'
 
 workflow{
     /* 
@@ -71,13 +74,29 @@ workflow{
     getStrModuleHitsBedParameters=strPositiveHits.cross(strClassModule).map(it -> [it[1][0], it[1][1], it[0][1]]) //join and remap to get tuples (strClass, ModuleId, strPositiveHits)
     strModuleHitsBed=GET_STR_MODULE_HITS_BED(getStrModuleHitsBedParameters)
     strModuleHitsFasta=GET_FASTA_BEDTOOLS_STRMODULEHITS(strModuleHitsBed, hipStr1001bpFasta, hipStr1001bpFaidx)
+    strModuleHitsFastaNonEmpty=strModuleHitsFasta.filter(it -> !it[2].isEmpty())
     // Background : non hits for each (strClass,module)
     getStrModuleNonHitsBedParameters=strNegativeHits.cross(strClassModule).map(it -> [it[1][0], it[1][1], it[0][1]]) //join and remap to get tuples (strClass, ModuleId, strNegativeHits)
     strModuleNonHitsBed=GET_STR_MODULE_NON_HITS_BED(getStrModuleNonHitsBedParameters)
     strModuleNonHitsFasta=GET_FASTA_BEDTOOLS_STRMODULENONHITS(strModuleNonHitsBed, hipStr1001bpFasta, hipStr1001bpFaidx)
+    strModuleNonHitsFastaNonEmpty=strModuleNonHitsFasta.filter(it -> !it[2].isEmpty())
     // Background : for each (strClass, module) : non hits for the module but hits in other modules of the same STR class
     getStrModuleOtherHitsBedParameters=strPositiveHits.cross(strClassModule).map(it -> [it[1][0], it[1][1], it[0][1]])
     strModuleOtherHitsBed=GET_STR_MODULE_OTHER_HITS_BED(getStrModuleOtherHitsBedParameters)
     strModuleOtherHitsFasta=GET_FASTA_BEDTOOLS_STRMODULEOTHERHITS(strModuleOtherHitsBed, hipStr1001bpFasta, hipStr1001bpFaidx)
-
+    strModuleOtherHitsFastaNonEmpty=strModuleOtherHitsFasta.filter(it -> !it[2].isEmpty())
+    
+    /*
+    ## Use Homer to find motif
+    */
+    // get the homer len param for each Module
+    homerLenParam=GET_HOMER_LEN_PARAM(strModuleHitsFasta)
+    // call with strModuleNonHitsFastaNonEmpty (posision where module doesn't hit) as background
+    findMotifsHomerNonHitParams=strClassModule.join(strModuleHitsFastaNonEmpty, by:[0,1]).join(strModuleNonHitsFastaNonEmpty, by:[0,1]).join(homerLenParam, by:[0,1])
+    nonHitsHomerResultsFolders=FIND_MOTIFS_HOMER_NONHITS(findMotifsHomerNonHitParams, jasparDatabaseHomer, "allHitsVsNonHits")
+    // call with strModuleOtherHitsFastaNonEmpty (position where module doesn't hit but other module does) as background
+    findMotifsHomerOtherHitsParams=strClassModule.join(strModuleHitsFastaNonEmpty, by:[0,1]).join(strModuleOtherHitsFastaNonEmpty, by:[0,1]).join(homerLenParam, by:[0,1])
+    otherHitsHomerResultsFolders=FIND_MOTIFS_HOMER_OTHERHITS(findMotifsHomerNonHitParams, jasparDatabaseHomer, "allHitsVsOtherHits")
+   
+    
 }
