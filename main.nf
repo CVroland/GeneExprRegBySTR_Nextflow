@@ -16,6 +16,10 @@ include {GET_STR_MODULE_OTHER_HITS_BED} from './modules/getStrModuleOtherHitsBed
 include {GET_HOMER_LEN_PARAM} from './modules/getHomerLenParams.nf'
 include {FIND_MOTIFS_HOMER as FIND_MOTIFS_HOMER_NONHITS} from './modules/findMotifsHomer.nf'
 include {FIND_MOTIFS_HOMER as FIND_MOTIFS_HOMER_OTHERHITS} from './modules/findMotifsHomer.nf'
+include {PARSE_HOMER_RESULTS as PARSE_HOMER_RESULTS_NONHITSBG} from './modules/parseHomerResults.nf'
+include {PARSE_HOMER_RESULTS as PARSE_HOMER_RESULTS_OTHERHITSBG} from './modules/parseHomerResults.nf'
+include {CONCATE_HOMER_RESULTS as CONCATE_HOMER_RESULTS_NONHITSBG} from './modules/concateHomerResults.nf'
+include {CONCATE_HOMER_RESULTS as CONCATE_HOMER_RESULTS_OTHERHITSBG} from './modules/concateHomerResults.nf'
 
 workflow{
     /* 
@@ -97,6 +101,20 @@ workflow{
     // call with strModuleOtherHitsFastaNonEmpty (position where module doesn't hit but other module does) as background
     findMotifsHomerOtherHitsParams=strClassModule.join(strModuleHitsFastaNonEmpty, by:[0,1]).join(strModuleOtherHitsFastaNonEmpty, by:[0,1]).join(homerLenParam, by:[0,1])
     otherHitsHomerResultsFolders=FIND_MOTIFS_HOMER_OTHERHITS(findMotifsHomerNonHitParams, jasparDatabaseHomer, "allHitsVsOtherHits")
+
+    /*
+    ## Parse Homer results
+    */
+    // parse homer results for non hits background
+    parseHomerResultsNonHitsBgParams=nonHitsHomerResultsFolders
+    parsedHomerResultsNonHitsBg=PARSE_HOMER_RESULTS_NONHITSBG(parseHomerResultsNonHitsBgParams, "nonHitsBg")
+    concateHomerResultsNonHitsBgParams=parsedHomerResultsNonHitsBg.map(it -> it[2]).collect()
+    homerResultsNonHitsBg=CONCATE_HOMER_RESULTS_NONHITSBG(concateHomerResultsNonHitsBgParams, "nonHitsBg")
+    // parse homer results for other hits background
+    parseHomerResultsOtherHitsBgParams=otherHitsHomerResultsFolders
+    parsedHomerResultsOtherHitsBg=PARSE_HOMER_RESULTS_OTHERHITSBG(parseHomerResultsOtherHitsBgParams, "otherHitsBg")
+    concateHomerResultsOtherHitsBgParams=parsedHomerResultsOtherHitsBg.map(it -> it[2]).collect()
+    homerResultsOtherHitsBg=CONCATE_HOMER_RESULTS_OTHERHITSBG(concateHomerResultsOtherHitsBgParams, "otherHitsBg")
    
     
 }
