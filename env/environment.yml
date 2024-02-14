@@ -2,6 +2,7 @@ name: GeneExprRegBySTR
 channels:
 - conda-forge
 - bioconda
+- pytorch
 - defaults
 
 dependencies:
@@ -9,7 +10,8 @@ dependencies:
 - numpy
 - pandas
 - pyarrow
-- pytorch 
+- pytorch::pytorch
+- pytorch::cpuonly
 - biopython
 - bedtools=2.30.0
 - samtools
@@ -17,5 +19,5 @@ dependencies:
 - matplotlib
 - seaborn
 - homer
-- beautifulsoup4 
-- lxml 
+- beautifulsoup4
+- lxml
