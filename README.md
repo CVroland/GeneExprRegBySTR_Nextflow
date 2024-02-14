@@ -16,8 +16,9 @@ The data used in this study is available [here](liketotheData). The data is comp
 
 - `mnnModels/`: a directory containing the hyperparameters and the parameters of the different MNN models.
 - `hg38.hipstr_reference.cage.500bp.around3end.fa`: a fasta file containing the sequences of the 500bp around the 3' end of all STRs.
-- `hg38all_names_raw.npy` : a numpy file containing the names of STRs with a correct prediction of the CAGE signal.
-- `hg38all_seqs_raw.npy` : a numpy file containing the one-hot encoded sequences of STRs with a correct prediction of the CAGE signal.
+- `hg38all_names_raw.npy` : a numpy file containing the names of all STRs.
+- `hg38all_seqs_raw.npy` : a numpy file containing the one-hot encoded sequences of all STRs.
+- `merged_results.txt` : a TSV file listing all the STR-gene association with a correct prediction of the CAGE signal.
 
 Those files need to be downloaded and placed in the `data` directory.
 
@@ -29,18 +30,27 @@ To launch the pipeline, you need to execute the following command in the reposit
 nextflow main.nf
 ```
 
-A `local` profile is used to run the pipeline on your local machine (option `-profile local`). It launches the pipeline with a single process. Some processes need a large amount of memory and can crash if you run the pipeline with too much parallel executions or on a machine with limited memory. The `-resume` option allows you to resume the pipeline from where it stopped if it was stopped for any reason.
+A `local1p` profile is used to run the pipeline on your local machine (option `-profile local1p`). It launches the pipeline with a single process. Some processes need a large amount of memory and can crash if you run the pipeline with too much parallel executions or on a machine with limited memory. The `-resume` option allows you to resume the pipeline from where it stopped if it was stopped for any reason.
 
 ## Results
 
 The results of the pipeline are located in the `results` directory. Pregenerated results are available [here](linktotheResults).
 
-
 ## Issues
+
+### IFB cluster
+
+On the IFB cluster, there is a problem with the conda environment and the path to the python interpreter. To solve this problem, we need to use a singularity container. To do so, you need to execute the following command:
+
+```bash
+singularity build ./env/GeneExprRegBySTR.simg ./env/Singularity
+```
+
+Then, you can launch the pipeline normally.
 
 ### out-of-memory while creating the conda environment
 
-On IFB core cluster, the pipeline can crash with the following error:
+The pipeline can crash with the following error:
 
 ```text
 ERROR ~ Error executing process > 'GET_SEQ_NAMES_AND_ONE_HOT_BY_STR_CLASS (1)'
@@ -62,7 +72,7 @@ slurmstepd: error: Detected 1 oom-kill event(s) in StepId=37724626.0. Some of yo
 srun: error: cpu-node-3: task 0: Out Of Memory
 ```
 
-Try to execute the command given after `command:` in the error message. 
+Try to execute the command given after `command:` in the error message.
 
 ### strict repo priority while creating the conda environment
 
