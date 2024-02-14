@@ -43,7 +43,9 @@ The results of the pipeline are located in the `results` directory. Pregenerated
 On the IFB cluster, there is a problem with the conda environment and the path to the python interpreter. To solve this problem, we need to use a singularity container. To do so, you need to execute the following command:
 
 ```bash
-singularity build ./env/GeneExprRegBySTR.simg ./env/Singularity
+cd env/
+singularity build GeneExprRegBySTR.simg Singularity
+cd ..
 ```
 
 Then, you can launch the pipeline normally.
