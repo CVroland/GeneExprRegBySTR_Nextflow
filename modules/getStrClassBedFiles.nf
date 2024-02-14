@@ -1,5 +1,4 @@
 process GET_STR_CLASS_BED_FILES{
-    conda params.condaEnv
 
     input:
     tuple val(strClass), path(strClassSeqNames), path(mnnResultsArray), path(modelHParams), path(modelParams)

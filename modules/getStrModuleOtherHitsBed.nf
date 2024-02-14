@@ -1,5 +1,4 @@
 process GET_STR_MODULE_OTHER_HITS_BED{
-    conda params.condaEnv
 
     input: 
     tuple val(strClass), val(moduleId), path(strPositiveHits)

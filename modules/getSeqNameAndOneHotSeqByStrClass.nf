@@ -1,5 +1,4 @@
 process GET_SEQ_NAMES_AND_ONE_HOT_BY_STR_CLASS{
-    conda params.condaEnv
 
     input:
     val strClass

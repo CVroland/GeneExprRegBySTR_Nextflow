@@ -1,5 +1,4 @@
 process COMPUTE_MNN_RESULTS{
-    conda params.condaEnv
     publishDir "$params.resultsDir/$strClass", mode: 'copy'
 
     input:

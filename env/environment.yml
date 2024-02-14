@@ -19,5 +19,6 @@ dependencies:
 - matplotlib
 - seaborn
 - homer
+- requests
 - beautifulsoup4
 - lxml
