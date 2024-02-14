@@ -108,7 +108,7 @@ If you use this pipeline, please cite the following article:
 ```bibtex
 @article{grapotte2024impact,
   title={Impact of transcription initiation at microsatellites on gene expression},
-  author={Mathys Grapotte, Charles Lecellier , Christophe Vroland},
+  author={Mathys Grapotte, Christophe Vroland, Diego Garrido-Martin, Alessio Vignoli, Lisa Calero, Quentin Bouvier, Mathilde Robin, Clément Chatelain, Laurent Bréhélin, Cédric Notredame, Roderic Guigo, Charles-Henri Lecellier},
   journal={...},
   year={2024},
   publisher={...}
