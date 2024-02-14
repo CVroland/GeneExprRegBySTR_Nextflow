@@ -10,6 +10,6 @@ process CONCATE_HOMER_RESULTS{
     shell:
     homerCsvList = strModuleHomerCsv instanceof List ? strModuleHomerCsv.join(" ") : strModuleHomerCsv
     '''
-    awk 'NR==FNR||FNR>1' !{homerCsvList} | awk '!/^[[:space:]]*$/' > ${subName}_homerResults.csv
+    awk 'NR==FNR||FNR>1' !{homerCsvList} | awk '!/^[[:space:]]*$/' > !{subName}_homerResults.csv
     '''
 }

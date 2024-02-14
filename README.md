@@ -34,3 +34,63 @@ A `local` profile is used to run the pipeline on your local machine (option `-pr
 ## Results
 
 The results of the pipeline are located in the `results` directory. Pregenerated results are available [here](linktotheResults).
+
+
+## Issues
+
+### out-of-memory while creating the conda environment
+
+On IFB core cluster, the pipeline can crash with the following error:
+
+```text
+ERROR ~ Error executing process > 'GET_SEQ_NAMES_AND_ONE_HOT_BY_STR_CLASS (1)'
+
+Caused by:
+  Failed to create Conda environment
+  command: mamba env create --prefix [DIR] --file [ENV_PATH]
+  status : 137
+  message:
+
+
+
+ -- Check '.nextflow.log' file for details
+
+
+WARN: Killing running tasks (1)
+
+slurmstepd: error: Detected 1 oom-kill event(s) in StepId=37724626.0. Some of your processes may have been killed by the cgroup out-of-memory handler.
+srun: error: cpu-node-3: task 0: Out Of Memory
+```
+
+Try to execute the command given after `command:` in the error message. 
+
+### strict repo priority while creating the conda environment
+
+When creating the conda environment, you may encounter the following error:
+
+```text
+Encountered problems while solving:
+  - package pytorch-2.2.0-py3.9_cuda12.1_cudnn8.9.2_0 is excluded by strict repo priority
+```
+
+It can be solved by executing the following command:
+
+```bash
+conda config --set channel_priority disabled
+```
+
+Then, try to create the environment again.
+
+## citation
+
+If you use this pipeline, please cite the following article:
+
+```bibtex
+@article{grapotte2024impact,
+  title={Impact of transcription initiation at microsatellites on gene expression},
+  author={Mathys Grapotte, Charles Lecellier , Christophe Vroland},
+  journal={...},
+  year={2024},
+  publisher={...}
+}
+```
