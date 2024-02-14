@@ -38,7 +38,7 @@ The results of the pipeline are located in the `results` directory. Pregenerated
 
 ## Issues
 
-### IFB cluster
+### Use singularity instead of conda for IFB cluster
 
 On the IFB cluster, there is a problem with the conda environment and the path to the python interpreter. To solve this problem, we need to use a singularity container. To do so, you need to execute the following command:
 
@@ -48,7 +48,15 @@ singularity build GeneExprRegBySTR.simg Singularity
 cd ..
 ```
 
-Then, you can launch the pipeline normally.
+Then, you can launch the pipeline normally with ifb profile (`-profile ifb`).
+
+### slurm account
+
+Nextflow use the default slurm account to submit the jobs. If you want to use another account, you have to change the default account :
+
+```bash
+sacctmgr update user <your-login> set defaultaccount=<project-name>
+```
 
 ### out-of-memory while creating the conda environment
 
