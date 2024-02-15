@@ -35,7 +35,7 @@ LAST_API_URL="https://jaspar.elixir.no/api/v1/"
 Latest URL of the JASPAR REST API.
 """
 
-RELEASE_API_URL="https://jaspar{release}.genereg.net/"
+RELEASE_API_URL="https://jaspar{release}.genereg.net/api/v1/"
 """
 Base URL of the JASPAR REST API for a specific release (before 2024 release version). The release number should be formatted using `release` as a keyword.
 """
@@ -265,7 +265,7 @@ def parseArgs() -> argparse.Namespace:
     parser.add_argument("-r", "--release", type=str, default=None,help="Access a specific release of JASPAR. Available releases are: 2014, 2016, 2018, 2020 and 2022. If blank, the query will provide data from the latest release.")
     parser.add_argument("-f", "--outputFormat", type=str, default="jaspar", help="Format of the output, by default \"jaspar\". Available formats are : \"json\", \"jsonp\", \"jaspar\", \"meme\", \"transfac\", \"pfm\" and \"yaml\" ") #bed not supported
     parser.add_argument("-a", "--cat", action="store_true", help="Use this option if you want to use the output to complete an existing file. It will remove the header of the first matrix")
-    parser.add_argument("-u", "--apiUrl", type=str, default=API_URL, help="API URL. Use 'https://jaspar2020.genereg.net/api/v1/' if you want to get access to POLII collection.")
+    parser.add_argument("-u", "--apiUrl", type=str, default=None, help="API URL. Use 'https://jaspar2020.genereg.net/api/v1/' if you want to get access to POLII collection.")
     return parser.parse_args()
 
 def main():
