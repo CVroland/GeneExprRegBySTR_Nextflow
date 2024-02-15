@@ -20,7 +20,51 @@ import re
 import requests
 
 from typing import Generator, Sequence, Optional, Dict, Any
-API_URL="https://jaspar.genereg.net/api/v1/"
+API_URL="https://jaspar.elixir.no/api/v1/"
+"""
+Default URL of the JASPAR REST API. Latest release is used by default.
+"""
+
+LAST_RELEASE="2024"
+"""
+Latest release of JASPAR.
+"""
+
+LAST_API_URL="https://jaspar.elixir.no/api/v1/"
+"""
+Latest URL of the JASPAR REST API.
+"""
+
+RELEASE_API_URL="https://jaspar{release}.genereg.net/"
+"""
+Base URL of the JASPAR REST API for a specific release (before 2024 release version). The release number should be formatted using `release` as a keyword.
+"""
+
+
+def getApiUrl(release=None, baseUrl=None):
+    """
+    Get the API URL for a specific release of JASPAR.
+
+    Parameters
+    ----------
+    release : str, optional
+        Release number, by default None. If None or "latest", the URL for the latest release is returned.
+    baseUrl : str, optional
+        Base URL of the API, by default None.
+
+    Returns
+    -------
+    str
+        The API URL for the specified release.
+
+    """
+    if release is None or release==LAST_RELEASE or release=="latest":
+        return LAST_API_URL
+    else:
+        # if baseUrl is None and release < 2024:
+        if baseUrl is None:
+            baseUrl=RELEASE_API_URL
+        return baseUrl.format(release=release)
 
 def getJsonRestRequest(
     url:str, 
@@ -238,6 +282,9 @@ def main():
     outputFormat=args.outputFormat
     cat=args.cat
     apiUrl=args.apiUrl
+    # get an explicit API URL for the release.
+    if apiUrl is None:
+        apiUrl=getApiUrl(release)
     motifMatrixTxtGenerator=getMotifs(
         collection=collection,
         name=name,
