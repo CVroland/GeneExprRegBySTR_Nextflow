@@ -118,7 +118,7 @@ def main():
     parser.add_argument("allSeqNamesFilePath", type=str, help="Path to the `hg38all_names_raw.npy` file.")
     parser.add_argument("allOneHotSeqFilePath", type=str, help="Path to the `hg38all_seqs_raw.npy` file.")
     parser.add_argument("mergedResultsFilePath", type=str, help="Path to the merged_results.txt file.")
-    parser.add_argument("strClass", type=str, help="The STR class sequence to keep.")
+    parser.add_argument("--strClass", type=str, default=None, help="The STR class sequence to keep. If not provided, the script will keep all STR sequences that are in the mergedResults file.")
     parser.add_argument("outputSeqNamesFilePath", type=str, help="Path to the output sequenceNames file.")
     parser.add_argument("outputOneHotSeqFilePath", type=str, help="Path to the output oneHotSeq file.")
     args=parser.parse_args()
@@ -127,8 +127,10 @@ def main():
     #load data
     mergedResultsSeqNamesArray=getSeqNamesArray(args.mergedResultsFilePath)
     #filter data
-    unSortedUniqStrSeqNames=filterSeqNames(mergedResultsSeqNamesArray, args.strClass)
-    del mergedResultsSeqNamesArray
+    if args.strClass is None:
+        unSortedUniqStrSeqNames=mergedResultsSeqNamesArray
+    else:
+        unSortedUniqStrSeqNames=filterSeqNames(mergedResultsSeqNamesArray, args.strClass)
     # get the seqNamesArray and oneHotSeqArray for the STR class
     allSeqNamesArray=np.load(args.allSeqNamesFilePath)
     allOneHotSeqArray=np.load(args.allOneHotSeqFilePath)

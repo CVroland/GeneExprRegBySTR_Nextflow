@@ -3,6 +3,7 @@ include {LIST_STR_MODULE} from './modules/listModule.nf'
 include {REQUEST_JASPAR_DATABASE} from './modules/requestJasparDatabase.nf'
 include {MEME_TO_HOMER_FORMAT} from './modules/memeToHomerFormat.nf'
 include {RENAME_SEQ_IN_FASTA} from './modules/renameSeqIn1001ncFasta.nf'
+include {PREFILTRE_SEQ_NAMES_AND_ONE_HOT} from './modules/prefiltreSeqNameAndOneHitsSeq.nf'
 include{GET_SEQ_NAMES_AND_ONE_HOT_BY_STR_CLASS} from './modules/getSeqNameAndOneHotSeqByStrClass.nf'
 include {COMPUTE_MNN_RESULTS} from './modules/computeMnnResults.nf'
 include {GET_STR_CLASS_BED_FILES} from './modules/getStrClassBedFiles.nf'
@@ -57,11 +58,14 @@ workflow{
     oneHotSeqFile=Channel.fromPath(params.oneHotSeqFile).first()
     seqNameFile=Channel.fromPath(params.seqNameFile).first()
     mergedResultsFile=Channel.fromPath(params.mergedResultsFile).first()
+    // prefiltre the input files
+    (prefilteredSeqNameFile,prefilteredOneHotSeqFile)=PREFILTRE_SEQ_NAMES_AND_ONE_HOT(seqNameFile, oneHotSeqFile, mergedResultsFile)
+
     // XXX: Nexflow does not ensure the order of the (output) channels, so we need to keep all the channels indexed by strClass
     mnnModelParams=strClass.map(strClass -> [strClass, file("${params.mnnModelsDir}/MNN_ranks_${strClass}_.pt")])
     mnnModelHParams=strClass.map(strClass -> [strClass, file("${params.mnnModelsDir}/MNN_ranks_${strClass}_params.npy")])
     // get seqNameFile and oneHotSeqFile grouped by strClass
-    (strSeqNameFile, strOneHotSeqFile)=GET_SEQ_NAMES_AND_ONE_HOT_BY_STR_CLASS(strClass, seqNameFile, oneHotSeqFile, mergedResultsFile)
+    (strSeqNameFile, strOneHotSeqFile)=GET_SEQ_NAMES_AND_ONE_HOT_BY_STR_CLASS(strClass, prefilteredSeqNameFile, prefilteredOneHotSeqFile, mergedResultsFile)
     //join input channel by strClass 
     // computeMnnResultsJoinedParameters : [strClass, mnnModelHParams, mnnModelParams, strSeqNameFile]
     computeMnnResultsJoinedParameters = strClass.join(mnnModelHParams).join(mnnModelParams).join(strSeqNameFile).join(strOneHotSeqFile)
