@@ -7,10 +7,10 @@ process FIND_MOTIFS_HOMER{
     val subName 
 
     output:
-    tuple val(strClass), val(moduleId), path("${subName}")
+    tuple val(strClass), val(moduleId), path("homer")
 
     script:
-    def outDir = "${subName}"
+    def outDir = "homer"
 
     """
     mkdir p "${outDir}"

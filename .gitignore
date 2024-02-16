@@ -1,5 +1,7 @@
 # ignore workspace files
 /*.code-workspace
+# ignore test and prototyping files
+/test
 
 # ignore data files
 /data/*

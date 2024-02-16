@@ -90,7 +90,7 @@ def getStrMask(allSeqNames:np.ndarray, strSeqNames:np.ndarray)->np.ndarray:
     mask = np.array([seqName in strSeqNamesSet for seqName in allSeqNames])
     return mask
 
-def filterSeqNamesAndOneHotSeqArray(allSeqNamesArray:np.ndarray, allOneHotSeqArray:np.ndarray, strSeqNames:np.ndarray)->(np.ndarray, np.ndarray):
+def filterSeqNamesAndOneHotSeqArray(allSeqNamesArray:np.ndarray, allOneHotSeqArray:np.ndarray, strSeqNames:np.ndarray)->tuple[np.ndarray, np.ndarray]:
     """
     Filter sequenceNames file and oneHotSeq file to keep only the sequences sequences for a given STR class.
 
