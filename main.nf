@@ -21,6 +21,7 @@ include {PARSE_HOMER_RESULTS as PARSE_HOMER_RESULTS_NONHITSBG} from './modules/p
 include {PARSE_HOMER_RESULTS as PARSE_HOMER_RESULTS_OTHERHITSBG} from './modules/parseHomerResults.nf'
 include {CONCATE_HOMER_RESULTS as CONCATE_HOMER_RESULTS_NONHITSBG} from './modules/concateHomerResults.nf'
 include {CONCATE_HOMER_RESULTS as CONCATE_HOMER_RESULTS_OTHERHITSBG} from './modules/concateHomerResults.nf'
+include {PLOT_MNN_SCORE} from './modules/plotMnnScore.nf'
 
 workflow{
     /* 
@@ -70,7 +71,13 @@ workflow{
     // computeMnnResultsJoinedParameters : [strClass, mnnModelHParams, mnnModelParams, strSeqNameFile]
     computeMnnResultsJoinedParameters = strClass.join(mnnModelHParams).join(mnnModelParams).join(strSeqNameFile).join(strOneHotSeqFile)
     mnnResultsArray=COMPUTE_MNN_RESULTS(computeMnnResultsJoinedParameters)
+    // plot MNN module Activation Score
+    strIntermediatePlotMnnScoreParameters = mnnResultsArray.join(mnnModelHParams).join(mnnModelParams)
+    strPlotMnnScoreParameters=strIntermediatePlotMnnScoreParameters.cross(strClassModule).map(it -> [it[1][0], it[1][1], it[0][1], it[0][2], it[0][3]]) //join and remap to get tuples (strClass, ModuleId, mnnResultsArray)
+    mnnActivationScorePlot=PLOT_MNN_SCORE(strPlotMnnScoreParameters)
     
+
+
     /*
     ## Get the fasta files of background sequences and foreground sequences
     */
