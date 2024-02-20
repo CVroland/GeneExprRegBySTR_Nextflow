@@ -22,13 +22,12 @@ import argparse
 import pathlib
 
 import numpy as np
-import pandas as pd
-import matplotlib as mpl
 import seaborn as sns
-mpl.rcParams['text.usetex'] = True
+# import matplotlib as mpl
+# mpl.rcParams['text.usetex'] = True
 import matplotlib.pyplot as plt
 
-from typing import Generator, NewType, Union, Tuple
+from typing import NewType, Union, Tuple
 
 FString=NewType("FString", str)
 PdQuery=NewType("PdQuery", str)
