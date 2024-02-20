@@ -1,4 +1,5 @@
 process PLOT_MNN_SCORE{
+    errorStrategy 'ignore'
     publishDir "$params.resultsDir/$strClass/$moduleId", mode: 'copy'
 
     input:
