@@ -12,7 +12,7 @@ This is a part of the study ["Impact of transcription initiation at microsatelli
 
 ## Download the data
 
-The data used in this study is available [here](liketotheData). The data is composed of 4 files and 1 directory:
+The data used in this study is available [here](https://seafile.lirmm.fr/f/2b74469daf5542149d1a/). The data is composed of 4 files and 1 directory:
 
 - `mnnModels/`: a directory containing the hyperparameters and the parameters of the different MNN models.
 - `hg38.hipstr_reference.cage.500bp.around3end.fa`: a fasta file containing the sequences of the 500bp around the 3' end of all STRs.
@@ -34,7 +34,7 @@ A `local1p` profile is used to run the pipeline on your local machine (option `-
 
 ## Results
 
-The results of the pipeline are located in the `results` directory. Pregenerated results are available [here](linktotheResults).
+The results of the pipeline are located in the `results` directory. Pregenerated results are available [here](https://seafile.lirmm.fr/f/f64a44715e53449b8efe/).
 
 ## Issues
 
