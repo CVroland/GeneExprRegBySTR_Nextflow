@@ -155,13 +155,21 @@ def getModuleWeight(
     """
     return mnn.linear.weight.detach().cpu().numpy().flatten()[moduleId]
 
+poolFunctionDict={
+    "mean":np.mean,
+    "max":np.max,
+    "min":np.min,
+    "median":np.median
+}
+
 def getMeanPosActivationScore(
     mnnResultsArray:np.ndarray,
     mnn:mnnPseudoModel.Net,
     moduleId:int,
     threshold:float=0,
     bias:bool=False,
-    seqSize:int=101
+    seqSize:int=101,
+    poolFunction:str="mean"
 )->np.ndarray: #1D array of mean score (pos)
     """
     Get the mean position activation score for a given module.
@@ -178,6 +186,10 @@ def getMeanPosActivationScore(
         The threshold (ReLU), by default 0
     bias : bool, optional
         If True, add the bias, by default False
+    seqSize : int, optional
+        The sequence size, by default 101
+    poolFunction : str, optional
+        The pooling function, by default "mean". Can be "mean", "max", "min" or "median".
 
     Returns
     -------
@@ -188,8 +200,6 @@ def getMeanPosActivationScore(
     x=mnnResultsArray[moduleId]
     #apply ReLU
     x[x<threshold]=0
-    #mean over the sequence
-    x=np.mean(x, axis=0)
     #apply position coefficient
     posCoefArray=getPosCoefArray(mnn, moduleId)
     x*=posCoefArray
@@ -201,6 +211,8 @@ def getMeanPosActivationScore(
     # apply the module weight
     moduleWeight=getModuleWeight(mnn, moduleId)
     x*=moduleWeight
+    #pool the results along the sequence axis
+    x=poolFunctionDict[poolFunction](x, axis=0)
     return x
 
 def drawAxe(
@@ -245,12 +257,14 @@ def main():
     parser.add_argument('--bias', action='store_true', help='Add the bias to the score.')
     parser.add_argument('--fig', type=pathlib.Path, default=None, help='Output figure path.')
     parser.add_argument('--values', type=pathlib.Path, default=None, help='Output values path.')
+    parser.add_argument('--poolFunction', type=str, default="mean", help='The pooling function. Can be "mean", "max", "min" or "median".')
     args = parser.parse_args()
-
-    ylabel="Mean of the positional activation score"
+    poolName=args.poolFunction
+    poolName=poolName[0].upper()+poolName[1:]
+    ylabel=f"{poolName} of the positional activation score"
     mnnResultsArray=np.load(args.mnnResultsArray)
     mnn=loadMnnModel(args.mnnHParams, args.mnnParams)
-    resultsArray=getMeanPosActivationScore(mnnResultsArray, mnn, args.moduleId, bias=args.bias)
+    resultsArray=getMeanPosActivationScore(mnnResultsArray, mnn, args.moduleId, bias=args.bias, poolFunction=args.poolFunction)
     if args.fig is not None:
         fig, ax = plt.subplots()
         drawAxe(ax, resultsArray, ylabel=ylabel)
